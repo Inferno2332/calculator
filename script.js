@@ -34,12 +34,19 @@ let op = "";
 let secondNum = null;
 let lastWasNum = false;
 
+// In case the number is too long
 function clipOverflow(n) {
     s = n.toString()
     if (s.length > 11) {
         if (n >= 10**11) {
+            // Number has more than 11 digits
+            displayNum = 0;
+            firstNum = null;
+            op = "";
+            secondNum = null;
             return "Overflow";
         } else {
+            // Number is a decimal that needs to be truncated
             return s.slice(0, 11);
         }
     } else {
@@ -87,12 +94,6 @@ clearButton.addEventListener("click", () => {
 // Basic operator buttons (plus, minus, times, divide)
 const basicOperatorButtons = document.querySelectorAll(".operator.basic");
 basicOperatorButtons.forEach((button) => {
-    button.addEventListener("mouseover", () => {
-        button.style.backgroundColor = "hsl(0, 0%, 25%)";
-    })
-    button.addEventListener("mouseout", () => {
-        button.style.backgroundColor = "hsl(0, 0%, 20%)";
-    })
     button.addEventListener("click", (e) => {
         console.log(e.target.textContent);
         op = e.target.textContent;
@@ -147,6 +148,7 @@ equalsButton.addEventListener("click", () => {
         // Reset the calculation space
         firstNum = null;
         secondNum = null;
+        lastWasNum = true;
         op = "";
     }
 })
