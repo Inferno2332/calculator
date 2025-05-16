@@ -84,9 +84,9 @@ clearButton.addEventListener("click", () => {
     display.textContent = 0;
 })
 
-// Operator buttons (plus, minus, times, divide)
-const operatorButtons = document.querySelectorAll(".operator.basic");
-operatorButtons.forEach((button) => {
+// Basic operator buttons (plus, minus, times, divide)
+const basicOperatorButtons = document.querySelectorAll(".operator.basic");
+basicOperatorButtons.forEach((button) => {
     button.addEventListener("mouseover", () => {
         button.style.backgroundColor = "hsl(0, 0%, 25%)";
     })
@@ -117,6 +117,17 @@ operatorButtons.forEach((button) => {
             op = e.target.textContent;
         }
         lastWasNum = false;
+    })
+})
+
+// Mouseover for all operators
+const operatorButtons = document.querySelectorAll(".operator");
+operatorButtons.forEach((button) => {
+    button.addEventListener("mouseover", () => {
+        button.style.backgroundColor = "hsl(0, 0%, 25%)";
+    })
+    button.addEventListener("mouseout", () => {
+        button.style.backgroundColor = "hsl(0, 0%, 20%)";
     })
 })
 
