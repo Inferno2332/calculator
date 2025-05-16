@@ -63,7 +63,7 @@ for (let i=0; i<=9; i++) {
         if (displayNum.toString().length < 11) {
             displayNum = parseFloat(displayNum.toString() + i.toString());
         }
-        display.textContent = displayNum;
+        display.textContent = clipOverflow(displayNum);
     })
 }
 
