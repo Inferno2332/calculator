@@ -85,7 +85,7 @@ clearButton.addEventListener("click", () => {
 })
 
 // Operator buttons (plus, minus, times, divide)
-const operatorButtons = document.querySelectorAll(".operator");
+const operatorButtons = document.querySelectorAll(".operator.basic");
 operatorButtons.forEach((button) => {
     button.addEventListener("mouseover", () => {
         button.style.backgroundColor = "hsl(0, 0%, 25%)";
@@ -138,4 +138,25 @@ equalsButton.addEventListener("click", () => {
         secondNum = null;
         op = "";
     }
+})
+
+// Square root
+const squareRootButton = document.querySelector("#sqrt");
+squareRootButton.addEventListener("click", () => {
+    displayNum = Math.sqrt(displayNum);
+    display.textContent = clipOverflow(displayNum); 
+})
+
+// Percent
+const percentButton = document.querySelector("#percent");
+percentButton.addEventListener("click", () => {
+    displayNum = divide(displayNum, 100);
+    display.textContent = clipOverflow(displayNum); 
+})
+
+// Plus/Minus
+const plusMinusButton = document.querySelector("#pm");
+plusMinusButton.addEventListener("click", () => {
+    displayNum = -displayNum;
+    display.textContent = clipOverflow(displayNum); 
 })
