@@ -34,6 +34,19 @@ let op = "";
 let secondNum = null;
 let lastWasNum = false;
 
+function clipOverflow(n) {
+    s = n.toString()
+    if (s.length > 11) {
+        if (n >= 10**11) {
+            return "Overflow";
+        } else {
+            return s.slice(0, 11);
+        }
+    } else {
+        return n;
+    }
+}
+
 const display = document.querySelector("#display");
 
 // Number buttons
@@ -47,7 +60,9 @@ for (let i=0; i<=9; i++) {
     })
     button.addEventListener("click", () => {
         lastWasNum = true;
-        displayNum = parseFloat(displayNum.toString() + i.toString());
+        if (displayNum.toString().length < 11) {
+            displayNum = parseFloat(displayNum.toString() + i.toString());
+        }
         display.textContent = displayNum;
     })
 }
@@ -86,7 +101,7 @@ operatorButtons.forEach((button) => {
                 // First number is there already
                 secondNum = displayNum;
                 displayNum = operate(firstNum, op, secondNum);
-                display.textContent = displayNum;
+                display.textContent = clipOverflow(displayNum);
                 // Start the next calculation
                 firstNum = displayNum;
                 secondNum = null;
@@ -117,7 +132,7 @@ equalsButton.addEventListener("click", () => {
     if (firstNum !== null) {
         secondNum = displayNum;
         displayNum = operate(firstNum, op, secondNum);
-        display.textContent = displayNum;
+        display.textContent = clipOverflow(displayNum);
         // Reset the calculation space
         firstNum = null;
         secondNum = null;
