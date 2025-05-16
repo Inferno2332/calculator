@@ -25,7 +25,7 @@ h1 {
 .footer {
     display: flex;
     background-color: black;
-    height: 32px;
+    height: 48px;
     color: white;
     justify-content: center;
     align-items: center;
@@ -85,7 +85,7 @@ h1 {
 }
 
 .button.equals {
-    background-color: hsl(196, 65%, 47%);
+    background-color: hsl(196, 65%, 50%);
 }
 
 .button.operator {

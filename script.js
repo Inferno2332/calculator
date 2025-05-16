@@ -19,42 +19,108 @@ function operate(a, op, b) {
         return add(a, b);
     } else if (op === "-") {
         return subtract(a, b);
-    } else if (op === "*") {
+    } else if (op === "×") {
         return multiply(a, b);
-    } else if (op === "/") {
+    } else if (op === "÷") {
         return divide(a, b);
     } else {
-        return null
+        return op
     }
 }
 
-let displayNum = 0
+let displayNum = 0;
+let firstNum = null;
+let op = "";
+let secondNum = null;
+let lastWasNum = false;
+
 const display = document.querySelector("#display");
 
-// Functionality for number buttons
+// Number buttons
 for (let i=0; i<=9; i++) {
     const button = document.querySelector("#num-"+i)
-    button.addEventListener("mouseover", (e) => {
-        button.style.backgroundColor = "hsl(0, 0%, 20%)";
+    button.addEventListener("mouseover", () => {
+        button.style.backgroundColor = "hsl(0, 0%, 25%)";
     })
-    button.addEventListener("mouseout", (e) => {
+    button.addEventListener("mouseout", () => {
         button.style.backgroundColor = "hsl(0, 0%, 30%)";
     })
     button.addEventListener("click", () => {
-        displayNum = parseInt(displayNum.toString() + i.toString());
+        lastWasNum = true;
+        displayNum = parseFloat(displayNum.toString() + i.toString());
         display.textContent = displayNum;
     })
 }
 
-// Functionality for the clear button
+// Clear button
 const clearButton = document.querySelector("#clear");
-clearButton.addEventListener("mouseover", (e) => {
+clearButton.addEventListener("mouseover", () => {
     clearButton.style.backgroundColor = "hsl(0, 50%, 40%)";
 })
-clearButton.addEventListener("mouseout", (e) => {
+clearButton.addEventListener("mouseout", () => {
     clearButton.style.backgroundColor = "hsl(0, 50%, 50%)";
 })
 clearButton.addEventListener("click", () => {
     displayNum = 0;
+    firstNum = null;
+    op = null;
+    secondNum = null;
+    lastWasNum = false;
     display.textContent = 0;
+})
+
+// Operator buttons (plus, minus, times, divide)
+const operatorButtons = document.querySelectorAll(".operator");
+operatorButtons.forEach((button) => {
+    button.addEventListener("mouseover", () => {
+        button.style.backgroundColor = "hsl(0, 0%, 25%)";
+    })
+    button.addEventListener("mouseout", () => {
+        button.style.backgroundColor = "hsl(0, 0%, 20%)";
+    })
+    button.addEventListener("click", (e) => {
+        console.log(e.target.textContent);
+        op = e.target.textContent;
+        if (lastWasNum) {
+            if (firstNum !== null) {
+                // First number is there already
+                secondNum = displayNum;
+                displayNum = operate(firstNum, op, secondNum);
+                display.textContent = displayNum;
+                // Start the next calculation
+                firstNum = displayNum;
+                secondNum = null;
+                displayNum = 0;
+            } else {
+                // Don't have the first number yet
+                firstNum = displayNum;
+                displayNum = 0;
+            }
+        } else {
+            // Just change the operation
+            displayNum = 0;
+            op = e.target.textContent;
+        }
+        lastWasNum = false;
+    })
+})
+
+// Equals button
+const equalsButton = document.querySelector(".equals");
+equalsButton.addEventListener("mouseover", () => {
+    equalsButton.style.backgroundColor = "hsl(196, 65%, 40%)";
+})
+equalsButton.addEventListener("mouseout", () => {
+    equalsButton.style.backgroundColor = "hsl(196, 65%, 50%)";
+})
+equalsButton.addEventListener("click", () => {
+    if (firstNum !== null) {
+        secondNum = displayNum;
+        displayNum = operate(firstNum, op, secondNum);
+        display.textContent = displayNum;
+        // Reset the calculation space
+        firstNum = null;
+        secondNum = null;
+        op = "";
+    }
 })
