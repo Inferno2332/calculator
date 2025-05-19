@@ -151,7 +151,7 @@ equalsButton.addEventListener("mouseout", () => {
     equalsButton.style.backgroundColor = "hsl(196, 65%, 50%)";
 })
 equalsButton.addEventListener("click", () => {
-    if (firstNum !== null) {
+    if (firstNum !== null && lastWasNum) {
         secondNum = displayNum;
         displayNum = operate(firstNum, op, secondNum);
         display.textContent = clipOverflow(displayNum);
