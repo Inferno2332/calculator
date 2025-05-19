@@ -33,6 +33,7 @@ let firstNum = null;
 let op = "";
 let secondNum = null;
 let lastWasNum = false;
+let lastWasEquals = false;
 
 // In case the number is too long
 function clipOverflow(n) {
@@ -67,6 +68,10 @@ for (let i=0; i<=9; i++) {
     })
     button.addEventListener("click", () => {
         lastWasNum = true;
+        if (lastWasEquals) {
+            displayNum = 0;
+            lastWasEquals = false;
+        }
         if (displayNum.toString().length < 11) {
             displayNum = parseFloat(displayNum.toString() + i.toString());
         }
@@ -118,6 +123,7 @@ basicOperatorButtons.forEach((button) => {
             op = e.target.textContent;
         }
         lastWasNum = false;
+        lastWasEquals = false;
     })
 })
 
@@ -149,6 +155,7 @@ equalsButton.addEventListener("click", () => {
         firstNum = null;
         secondNum = null;
         lastWasNum = true;
+        lastWasEquals = true;
         op = "";
     }
 })
@@ -158,6 +165,7 @@ const squareRootButton = document.querySelector("#sqrt");
 squareRootButton.addEventListener("click", () => {
     displayNum = Math.sqrt(displayNum);
     display.textContent = clipOverflow(displayNum); 
+    lastWasEquals = false;
 })
 
 // Percent
@@ -165,6 +173,7 @@ const percentButton = document.querySelector("#percent");
 percentButton.addEventListener("click", () => {
     displayNum = divide(displayNum, 100);
     display.textContent = clipOverflow(displayNum); 
+    lastWasEquals = false;
 })
 
 // Plus/Minus
@@ -172,4 +181,5 @@ const plusMinusButton = document.querySelector("#pm");
 plusMinusButton.addEventListener("click", () => {
     displayNum = -displayNum;
     display.textContent = clipOverflow(displayNum); 
+    lastWasEquals = false;
 })
