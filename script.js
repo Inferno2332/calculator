@@ -87,7 +87,7 @@ clearButton.addEventListener("click", () => {
     firstNum = null;
     op = null;
     secondNum = null;
-    lastWasNum = false;
+    lastWasNum = true;
     display.textContent = 0;
 })
 
@@ -95,8 +95,6 @@ clearButton.addEventListener("click", () => {
 const basicOperatorButtons = document.querySelectorAll(".operator.basic");
 basicOperatorButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
-        console.log(e.target.textContent);
-        op = e.target.textContent;
         if (lastWasNum) {
             if (firstNum !== null) {
                 // First number is there already
@@ -105,11 +103,13 @@ basicOperatorButtons.forEach((button) => {
                 display.textContent = clipOverflow(displayNum);
                 // Start the next calculation
                 firstNum = displayNum;
+                op = e.target.textContent;
                 secondNum = null;
                 displayNum = 0;
             } else {
                 // Don't have the first number yet
                 firstNum = displayNum;
+                op = e.target.textContent;
                 displayNum = 0;
             }
         } else {
