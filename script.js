@@ -73,7 +73,11 @@ for (let i=0; i<=9; i++) {
             lastWasEquals = false;
         }
         if (displayNum.toString().length < 11) {
-            displayNum = parseFloat(displayNum.toString() + i.toString());
+            if (display.textContent[display.textContent.length - 1] === '.') {
+                displayNum = parseFloat(displayNum.toString() + "." + i.toString())
+            } else {
+                displayNum = parseFloat(displayNum.toString() + i.toString());
+            }
         }
         display.textContent = clipOverflow(displayNum);
     })
@@ -181,5 +185,14 @@ const plusMinusButton = document.querySelector("#pm");
 plusMinusButton.addEventListener("click", () => {
     displayNum = -displayNum;
     display.textContent = clipOverflow(displayNum); 
+    lastWasEquals = false;
+})
+
+// Decimal point
+const decimalButton = document.querySelector("#decimal");
+decimalButton.addEventListener("click", () => {
+    if (Number.isInteger(displayNum)) {
+        display.textContent = clipOverflow(displayNum.toString() + ".");
+    }
     lastWasEquals = false;
 })
