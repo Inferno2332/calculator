@@ -57,7 +57,8 @@ function clipOverflow(n) {
 const display = document.querySelector("#display");
 
 function updateDisplay() {
-  display.textContent = clipOverflow(displayValue);
+    const roundedVal = parseFloat(parseFloat(displayValue).toFixed(10));
+    display.textContent = clipOverflow(roundedVal.toString());
 }
 
 // Number buttons
