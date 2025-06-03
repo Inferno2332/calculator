@@ -15,25 +15,24 @@ function divide(a, b) {
 }
 
 function operate(a, op, b) {
-    if (op === "+") {
-        return add(a, b);
-    } else if (op === "-") {
-        return subtract(a, b);
-    } else if (op === "×") {
-        return multiply(a, b);
-    } else if (op === "÷") {
-        return divide(a, b);
-    } else {
-        return op
+    switch (op) {
+        case '+': 
+            return add(a, b);
+        case '-': 
+            return subtract(a, b);
+        case '×': 
+            return multiply(a, b);
+        case '÷': 
+            return divide(a, b);
     }
 }
 
-let displayNum = 0;
+let displayValue = "0";
 let firstNum = null;
-let op = "";
 let secondNum = null;
-let lastWasNum = false;
+let op = null;
 let lastWasEquals = false;
+let lastWasNum = false;
 
 // In case the number is too long
 function clipOverflow(n) {
@@ -57,6 +56,10 @@ function clipOverflow(n) {
 
 const display = document.querySelector("#display");
 
+function updateDisplay() {
+  display.textContent = clipOverflow(displayValue);
+}
+
 // Number buttons
 for (let i=0; i<=9; i++) {
     const button = document.querySelector("#num-"+i)
@@ -67,20 +70,20 @@ for (let i=0; i<=9; i++) {
         button.style.backgroundColor = "hsl(0, 0%, 30%)";
     })
     button.addEventListener("click", () => {
-        lastWasNum = true;
+        // If the last key was "=", reset the display before typing in new digits
         if (lastWasEquals) {
-            displayNum = 0;
+            displayValue = "";
             lastWasEquals = false;
         }
-        if (displayNum.toString().length < 11) {
-            if (display.textContent[display.textContent.length - 1] === '.') {
-                displayNum = parseFloat(displayNum.toString() + "." + i.toString())
-            } else {
-                displayNum = parseFloat(displayNum.toString() + i.toString());
-            }
+        if (displayValue === "0") {
+            // Prevent displaying stuff like 00
+            displayValue = i.toString();
+        } else {
+            displayValue += i.toString();
         }
-        display.textContent = clipOverflow(displayNum);
-    })
+        lastWasNum = true;
+        updateDisplay();
+    });
 }
 
 // Clear button
@@ -92,44 +95,42 @@ clearButton.addEventListener("mouseout", () => {
     clearButton.style.backgroundColor = "hsl(0, 50%, 50%)";
 })
 clearButton.addEventListener("click", () => {
-    displayNum = 0;
+    displayValue = "0";
     firstNum = null;
-    op = null;
     secondNum = null;
-    lastWasNum = true;
-    display.textContent = 0;
-})
+    op = null;
+    lastWasEquals = false;
+    lastWasNum = false;
+    updateDisplay();
+});
 
 // Basic operator buttons (plus, minus, times, divide)
 const basicOperatorButtons = document.querySelectorAll(".operator.basic");
 basicOperatorButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
-        if (lastWasNum) {
-            if (firstNum !== null) {
-                // First number is there already
-                secondNum = displayNum;
-                displayNum = operate(firstNum, op, secondNum);
-                display.textContent = clipOverflow(displayNum);
-                // Start the next calculation
-                firstNum = displayNum;
-                op = e.target.textContent;
-                secondNum = null;
-                displayNum = 0;
+        if (lastWasEquals) {
+            firstNum = parseFloat(displayValue);
+            op = null;               
+            lastWasEquals = false;
+            displayValue = "";      
+        } else if (lastWasNum) {
+            // If there's an existing operator and a number, do that operation
+            if (firstNum !== null && op !== null) {
+                secondNum = parseFloat(displayValue);
+                firstNum = operate(firstNum, op, secondNum);
+                displayValue = firstNum.toString();
+                updateDisplay();
             } else {
-                // Don't have the first number yet
-                firstNum = displayNum;
-                op = e.target.textContent;
-                displayNum = 0;
+                // If there's no existing operator, set firstNum
+                firstNum = parseFloat(displayValue);
             }
-        } else {
-            // Just change the operation
-            displayNum = 0;
-            op = e.target.textContent;
+            displayValue = ""; 
         }
+        // Add the new operator
+        op = e.target.textContent;
         lastWasNum = false;
-        lastWasEquals = false;
-    })
-})
+    });
+});
 
 // Mouseover for all operators
 const operatorButtons = document.querySelectorAll(".operator");
@@ -151,48 +152,65 @@ equalsButton.addEventListener("mouseout", () => {
     equalsButton.style.backgroundColor = "hsl(196, 65%, 50%)";
 })
 equalsButton.addEventListener("click", () => {
-    if (firstNum !== null && lastWasNum) {
-        secondNum = displayNum;
-        displayNum = operate(firstNum, op, secondNum);
-        display.textContent = clipOverflow(displayNum);
-        // Reset the calculation space
-        firstNum = null;
-        secondNum = null;
-        lastWasNum = true;
+    if (firstNum !== null && op !== null && lastWasNum) {
+        secondNum = parseFloat(displayValue);
+        firstNum = operate(firstNum, op, secondNum);
+        displayValue = firstNum.toString();
+        updateDisplay();
         lastWasEquals = true;
-        op = "";
+        lastWasNum = false;
+        op = null;
     }
-})
+});
 
 // Square root
 const squareRootButton = document.querySelector("#sqrt");
 squareRootButton.addEventListener("click", () => {
-    displayNum = Math.sqrt(displayNum);
-    display.textContent = clipOverflow(displayNum); 
-    lastWasEquals = false;
-})
+  const num = parseFloat(displayValue);
+  if (num < 0) {
+    displayValue = "Error";
+  } else {
+    const result = Math.sqrt(num);
+    displayValue = result.toString();
+  }
+  updateDisplay();
+  lastWasEquals = false;
+  lastWasNum = true;
+});
 
 // Percent
 const percentButton = document.querySelector("#percent");
 percentButton.addEventListener("click", () => {
-    displayNum = divide(displayNum, 100);
-    display.textContent = clipOverflow(displayNum); 
+    const num = parseFloat(displayValue);
+    const result = num / 100;
+    displayValue = result.toString();
+    updateDisplay();
     lastWasEquals = false;
-})
+    lastWasNum = true;
+});
 
 // Plus/Minus
 const plusMinusButton = document.querySelector("#pm");
 plusMinusButton.addEventListener("click", () => {
-    displayNum = -displayNum;
-    display.textContent = clipOverflow(displayNum); 
+    const num = parseFloat(displayValue);
+    const result = -num;
+    displayValue = result.toString();
+    updateDisplay();
     lastWasEquals = false;
-})
+    lastWasNum = true;
+});
 
 // Decimal point
 const decimalButton = document.querySelector("#decimal");
 decimalButton.addEventListener("click", () => {
-    if (Number.isInteger(displayNum)) {
-        display.textContent = clipOverflow(displayNum.toString() + ".");
+    // If the last key was "=", reset first
+    if (lastWasEquals) {
+        displayValue = "0";
+        lastWasEquals = false;
     }
-    lastWasEquals = false;
-})
+    if (!displayValue.includes(".")) {
+        displayValue += (displayValue === "" ? "0." : ".");
+    }
+    lastWasNum = true;
+    updateDisplay();
+});
